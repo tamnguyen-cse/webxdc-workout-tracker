@@ -1,0 +1,377 @@
+/* ---------- phones & tablets: auto-hiding page bar (.hdr) and dialog bar (.modal-bar) ---------- */
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  .hdr {
+    transition: transform 0.18s ease;
+  }
+  .hdr.bar-hide {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+  .modal,
+  .modal.sm {
+    position: relative;
+  }
+  /* sits over .modal-body so sliding it up on scroll-down gives the dialog full height */
+  .modal-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: var(--pop);
+    background: color-mix(in srgb, var(--pop) 92%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    transition: transform 0.18s ease;
+  }
+  .modal-bar.bar-hide {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+  .modal-body {
+    padding-top: 84px;
+  }
+  .modal.sm .modal-body {
+    padding-top: 76px;
+  }
+}
+/* ---------- phones: no sideways scroll, 40px touch targets, bottom-sheet dialogs ---------- */
+@media (max-width: 760px) {
+  .main {
+    padding: 0 16px 40px;
+  }
+  .btn {
+    height: 40px;
+  }
+  .choice-btn,
+  .choice-menu button {
+    height: 40px;
+  }
+  .grid .rowcard .row-del,
+  .grid .rowcard .row-star {
+    width: 32px;
+    height: 32px;
+  }
+  /* phones step page by page; the line under Prev / Next says where they are */
+  .pg-nums {
+    display: none;
+  }
+  .pager .pg-step {
+    flex: 1;
+  }
+  .cal-day {
+    min-height: 44px;
+  }
+  .cal-fire {
+    font-size: 12px;
+  }
+  .cal-title {
+    min-width: 0;
+    flex: 1;
+  }
+  .cal-head .btn {
+    margin-left: 0;
+  }
+  /* Gallery's 3 columns leave ~110px cards on a phone: cap at 2 */
+  .grid[data-cols="3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* no hardware keyboard on a phone: the shortcut list is noise */
+  #kbd-help,
+  .kbd-only {
+    display: none;
+  }
+  /* 16px stops iOS zooming into a focused field */
+  select,
+  input,
+  textarea {
+    font-size: 16px !important;
+  }
+  select,
+  input[type="date"],
+  input[type="text"],
+  input[type="number"],
+  input[type="search"],
+  input:not([type]) {
+    height: 40px;
+  }
+  /* dialogs become a bottom sheet just below the status bar; only .modal-body scrolls */
+  .modal-bg {
+    padding: 10px 0 0;
+    padding-top: calc(10px + var(--safe-t));
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .modal,
+  .modal.sm {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    border-radius: var(--rxl) var(--rxl) 0 0;
+    margin: 0;
+    animation: sheet-up 0.28s var(--ease);
+  }
+  .modal.sheet-drag {
+    will-change: transform;
+  }
+  .modal-bg.sheet-closing {
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
+  .page-head {
+    padding-top: 16px;
+  }
+  .page-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--r);
+  }
+  .page-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+  .page-title {
+    font-size: 26px;
+  }
+  /* settings rows: name + remove on line one, the ten swatches as a grid of equal cells
+     that shrink with the card (padding keeps the selected ring unclipped) */
+  .opt-row {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .opt-name {
+    flex: 1 1 auto;
+  }
+  .opt-del {
+    order: 2;
+  }
+  .swatches {
+    order: 3;
+    flex: 1 1 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    justify-items: center;
+    gap: 4px;
+    padding: 4px;
+  }
+  .swatches .swatch {
+    width: 100%;
+    max-width: 32px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  .gtimer {
+    height: 36px;
+    font-size: 13.5px;
+  }
+  .gtimer-day {
+    max-width: 105px;
+  }
+  .gtimer-toggle {
+    min-width: 34px;
+    justify-content: center;
+    font-size: 13px;
+  }
+  .modal-bar .gtimer-day {
+    display: none;
+  }
+  .tabbar {
+    margin: 14px 0;
+  }
+  .tabs {
+    padding-inline: 0;
+  }
+  .tab {
+    padding-inline: 0;
+    font-size: 11px;
+    letter-spacing: -0.01em;
+  }
+  /* search + primary action on one row, the filter chips scroll sideways below it */
+  .tab-tools {
+    gap: 10px 8px;
+  }
+  .tab-tools input.q {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+  .tab-tools .btn.primary {
+    flex: none;
+    margin-left: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tab-tools .filters {
+    order: 1;
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 0 -16px;
+    padding: 0 16px 2px;
+  }
+  .tab-tools .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .tab-tools select {
+    flex: none;
+    height: 40px;
+  }
+  /* Analytics has only range + workout pickers: keep both inside the viewport */
+  .tab-tools .filters.stats-filters {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+  }
+  .tab-tools .filters.stats-filters #st-ex {
+    flex: 1 1 140px;
+    width: 0;
+    min-width: 140px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .modal-body,
+  .modal.sm .modal-body {
+    padding: 68px 16px calc(32px + var(--safe-b));
+  }
+  .modal-title {
+    font-size: 24px;
+  }
+  .prop-k {
+    flex-basis: 116px;
+  }
+  .calc-desc {
+    margin-left: 6px;
+  }
+  /* editor rows: a 40px control in a 2px-padded cell, so the label matches its 44px */
+  .prop:has(input, select, .vref, .choice-pick, .timer) .prop-k {
+    height: 44px;
+  }
+  /* one line: crumb, actions, ✕ (top-right, room kept for it); the actions drop to a
+     second line only when they don't fit beside the crumb. */
+  .modal-bar {
+    min-height: 56px;
+    flex-wrap: wrap;
+    row-gap: 4px;
+    padding: 8px 52px 8px 18px;
+  }
+  .modal-crumb {
+    line-height: 40px;
+  }
+  /* with a record's own actions there is no room for the crumb too (it would land on a row of
+     its own under them); the big title below already names the record */
+  .modal-bar.has-extra .modal-crumb {
+    display: none;
+  }
+  .bar-actions {
+    gap: 4px;
+  }
+  .bar-actions .btn.ghost {
+    padding: 0 10px;
+  }
+  .bar-actions [data-close] {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .kbd-table td:first-child {
+    white-space: normal;
+  }
+  /* a phone draws the 560-wide chart at ~60 %, so its text is set larger to stay legible */
+  .svg-wrap text {
+    font-size: 15px;
+  }
+  /* cycle & exercise detail rows: stack name above sets/load so neither wraps mid-word */
+  .hist-row.hist-entry {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 9px 4px;
+  }
+  .hist-row.hist-entry .hist-name {
+    font-weight: 560;
+  }
+  .hist-row.hist-entry .hist-val {
+    text-align: left;
+    font-size: 13px;
+    padding-left: 22px;
+  }
+  .hist-row.hist-entry:not(:has(.hist-name)) .hist-val {
+    padding-left: 0;
+  }
+  /* exercise view: 2-column KPIs with Latest full-width below, stacked log rows */
+  .ex-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .ex-kpi-latest {
+    order: 3;
+    grid-column: 1 / -1;
+  }
+  .ex-log-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .ex-log-vals {
+    justify-content: flex-start;
+    padding-left: 18px;
+  }
+  .btn.ex-analytics,
+  .ex-log-pager .btn.sm {
+    height: 40px;
+  }
+  .ex-log-pager .btn {
+    flex: 1;
+  }
+  /* plan editor: frameless day header + compact exercise cards —
+     grip · exercise · ✕ / badges / sets · target · weight / full-width notes */
+  .dayhdr .pl-dname {
+    flex: 1 1 120px;
+    max-width: none;
+    min-width: 110px;
+  }
+  .pex {
+    padding: 12px 14px;
+  }
+  .pex-head {
+    flex-wrap: wrap;
+    gap: 8px 6px;
+  }
+  .pex-head .grip {
+    order: 0;
+  }
+  .pex-head .pe-pick {
+    order: 1;
+  }
+  .pex-head .pe-del {
+    order: 2;
+    width: 36px;
+    height: 36px;
+  }
+  .pex-head .pex-badges {
+    order: 3;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+  .pex-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .pex-notes {
+    grid-column: 1 / -1;
+  }
+  .qex-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

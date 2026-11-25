@@ -1,0 +1,26 @@
+/* Workout Tracker — Prism UI with light and dark themes, after healthy-kitchen (whose look comes
+   from app-creator): cool indigo accent on a soft blue-gray page, white surfaces with hairline
+   borders, pill buttons and filter chips, 18px cards, filled fields with an accent ring,
+   line-icon tabs as a bottom bar on phones and a left rail from 900px, sheet-style dialogs.
+   Phones get 40px targets, 16px fields and bottom-sheet dialogs (the max-width: 760px block).
+   Theme: <html data-theme="light|dark"> forces one; no attribute follows the OS.
+   Rules: one file per section in css/, imported below in cascade order — later files
+   override earlier ones, so a new rule goes in the file of its section. */
+@import url("css/base.css");
+@import url("css/app-bar.css");
+@import url("css/page.css");
+@import url("css/inputs.css");
+@import url("css/pills.css");
+@import url("css/exercise-blocks.css");
+@import url("css/ask.css");
+@import url("css/buttons.css");
+@import url("css/settings.css");
+@import url("css/text.css");
+@import url("css/tables.css");
+@import url("css/charts.css");
+@import url("css/dialogs.css");
+@import url("css/cards.css");
+@import url("css/calendar.css");
+@import url("css/phone.css");
+@import url("css/lists.css");
+@import url("css/keyboard.css");

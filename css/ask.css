@@ -1,0 +1,45 @@
+/* ---------- ask: the app's own confirm / notice (js/ask.js), above every dialog ---------- */
+.ask-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 300; /* above .modal-bg (200) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--scrim);
+  animation: fade-in 0.18s ease;
+}
+.ask {
+  width: 100%;
+  max-width: 420px;
+  padding: 22px;
+  border-radius: var(--rxl);
+  background: var(--pop);
+  box-shadow: var(--shadow-modal);
+  animation: pop-in 0.22s var(--ease);
+}
+.ask-msg {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+  white-space: pre-line; /* the message's \n\n paragraph breaks */
+  overflow-wrap: anywhere;
+}
+.ask-acts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+.ask-acts .btn {
+  height: 44px;
+  padding: 0 18px;
+}
+.btn.danger.solid,
+.btn.danger.solid:hover {
+  background: var(--red);
+  box-shadow: none;
+  color: #fff;
+}

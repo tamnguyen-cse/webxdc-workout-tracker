@@ -1,0 +1,74 @@
+/* ---------- analytics charts (inline SVG, themed from CSS tokens) ---------- */
+.svg-wrap {
+  background: var(--card);
+  border-radius: var(--rl);
+  box-shadow: var(--shadow-card);
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+}
+/* chart marks take theme colours; CSS overrides the SVG presentation attributes */
+.svg-wrap line {
+  stroke: var(--border-strong);
+}
+.svg-wrap text {
+  fill: var(--faint);
+}
+.svg-wrap polyline {
+  stroke: var(--acc);
+}
+.svg-wrap polyline.s1 {
+  stroke: var(--series-2);
+}
+.svg-wrap polyline.s2 {
+  stroke: var(--series-3);
+}
+.svg-wrap circle,
+.svg-wrap rect {
+  fill: var(--acc);
+}
+.svg-wrap .dot.s1 {
+  fill: var(--series-2);
+}
+.svg-wrap .dot.s2 {
+  fill: var(--series-3);
+}
+/* gridlines faint, the zero line solid; `.hit` is the invisible tap column around each
+   x-point, `.guide` the subtle vertical cursor line, `.on` the active point in the readout */
+.svg-wrap line.grid {
+  stroke: var(--border);
+}
+.svg-wrap line.guide {
+  stroke: var(--border-strong);
+  stroke-dasharray: 3 3;
+  opacity: 0;
+  pointer-events: none;
+}
+.svg-wrap .pt.on line.guide {
+  opacity: 1;
+}
+.svg-wrap .hit {
+  fill: transparent;
+  cursor: pointer;
+}
+.svg-wrap .pt.on .dot {
+  stroke: var(--text);
+  stroke-width: 2;
+}
+.chart-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: -4px 0 8px;
+  line-height: 1.45;
+}
+.readout {
+  min-height: 1.4em;
+  margin-bottom: 6px;
+}
+/* inside a card the chart shouldn't draw a second border */
+.card .svg-wrap {
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+  border-radius: 0;
+}

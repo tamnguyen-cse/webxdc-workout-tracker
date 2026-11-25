@@ -1,0 +1,183 @@
+/* ---------- exercise blocks (cycle session & plan editors) ---------- */
+.ex {
+  background: var(--card);
+  border-radius: var(--rl);
+  box-shadow: var(--shadow-card);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.ex.skipped,
+.ex.skip {
+  opacity: 0.45;
+}
+.ex-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ex-head .hint {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ex-name {
+  font-weight: 650;
+  font-size: 14.5px;
+}
+.ex-target {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-top: 3px;
+  white-space: pre-line; /* multi-line exercise notes keep their line breaks */
+}
+.ex-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.sets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+.setcell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.setcell span {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+.setcell input,
+.sets input.set-in {
+  width: 66px;
+  text-align: center;
+  padding: 0 6px;
+  background-color: var(--input);
+}
+.setcell input.done {
+  box-shadow: inset 0 0 0 1px var(--tag-green-tx);
+  background-color: var(--tag-green-bg);
+}
+/* plan editor: frameless day header + per-exercise cards matching cycle blocks */
+.pex-head {
+  flex-wrap: nowrap;
+}
+.pex-head .pe-pick {
+  flex: 1 1 0;
+  min-width: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pex-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+.pex-head .pe-del {
+  width: 32px;
+  height: 32px;
+}
+.pex-head .pe-del:hover,
+.dayhdr .pl-delday:hover {
+  background: var(--red-soft);
+  color: var(--red);
+}
+.pex-fields {
+  display: grid;
+  grid-template-columns: 76px 92px 110px minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.pex-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.pex-field > span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+  padding-left: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pex-field input {
+  width: 100%;
+  min-width: 0;
+}
+.day-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+/* quick-create workout card inside the plan editor */
+.qex {
+  margin-top: 4px;
+  border: 1px solid var(--border-strong);
+}
+.qex-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.qex-title {
+  font-size: 12px;
+  font-weight: 720;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--faint);
+}
+.qex-head .iconbtn {
+  width: 32px;
+  height: 32px;
+}
+.qex-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+.qex-type-f .choice-pick {
+  display: block;
+}
+.qex-type-f .choice-btn {
+  width: 100%;
+  justify-content: flex-start;
+  background: var(--input);
+  padding: 0 10px;
+}
+.qex-type-f .choice-btn:hover,
+.qex-type-f .choice-btn[aria-expanded="true"] {
+  background: var(--bg-side);
+}
+.qex-note-f {
+  margin-top: 10px;
+}
+.qex-note-f textarea {
+  width: 100%;
+  min-height: 68px;
+}
+.qex-acts {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}

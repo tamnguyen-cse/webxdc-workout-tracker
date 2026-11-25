@@ -1,0 +1,127 @@
+/* ---------- history calendar (js/history-calendar.js) ---------- */
+/* wide screens: the month on the left, the picked day's sessions beside it */
+@media (min-width: 900px) {
+  .cal {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
+  .cal-side .hist-h {
+    margin-top: 8px;
+  }
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cal-title {
+  font-size: 17px;
+  font-weight: 650;
+  min-width: 9.5em;
+  text-align: center;
+}
+.cal-head .btn {
+  margin-left: auto;
+}
+.cal-sum {
+  margin: 2px 0 0 8px;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 12px;
+}
+.cal-wd {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+  text-align: center;
+  padding-bottom: 4px;
+}
+.cal-day {
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: none;
+  border-radius: var(--rs);
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: var(--faint);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+}
+/* days with sessions: accent mark, strong number; empty days stay faint but pickable */
+.cal-day[data-lvl] {
+  color: var(--acc);
+  font-weight: 650;
+}
+.cal-day[data-lvl] .cal-n {
+  color: var(--text);
+  line-height: 1.1;
+}
+.cal-day[data-lvl="1"] {
+  background: var(--acc-soft);
+}
+.cal-day[data-lvl="2"] {
+  background: color-mix(in srgb, var(--acc) 30%, transparent);
+}
+.cal-day[data-lvl="3"],
+.cal-day[data-lvl="3"] .cal-n {
+  background: var(--acc);
+  color: var(--acc-ink);
+}
+.cal-day:hover {
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+.cal-day:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.cal-day.today .cal-n {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.cal-day.on,
+.cal-day.on:hover {
+  box-shadow:
+    0 0 0 2px var(--card),
+    0 0 0 4px var(--acc);
+}
+.cal-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1;
+}
+.cal-fire {
+  font-size: 13px;
+  line-height: 1;
+}
+.cal-c {
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1;
+}
+.cal-pick {
+  margin-top: 14px;
+  text-align: center;
+}
+@media (min-width: 900px) {
+  .cal-pick {
+    margin-top: 8px;
+    text-align: left;
+  }
+}
