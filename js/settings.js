@@ -2,49 +2,48 @@
    Opened from the gear in the top bar (or ","), not a tab: editable exercise levels
    (add, remove, colour), then the Data list (storage, backup, restore, erase) and the
    About list. Settings changes apply at once, like the theme — no Save. */
+function levelRowHtml(l, i) {
+  const label = l.id + " · " + l.name;
+  const swatches = COLOURS.map(
+    (c) =>
+      '<button type="button" class="swatch tag-' +
+      c +
+      (c === l.color ? " on" : "") +
+      '" data-lvl-i="' +
+      i +
+      '" data-lvl-colour="' +
+      c +
+      '" title="' +
+      c +
+      '" aria-label="' +
+      esc(l.name) +
+      ": " +
+      c +
+      '" aria-pressed="' +
+      (c === l.color) +
+      '"></button>',
+  ).join("");
+  return (
+    '<li class="opt-row"><span class="opt-name"><span class="pill tag-' +
+    l.color +
+    '">' +
+    esc(label) +
+    '</span></span><span class="swatches" role="group" aria-label="' +
+    esc(l.name) +
+    ' colour">' +
+    swatches +
+    '</span><button type="button" class="iconbtn opt-del" data-lvl-del="' +
+    i +
+    '" title="Remove ' +
+    esc(l.name) +
+    '" aria-label="Remove ' +
+    esc(l.name) +
+    '">✕</button></li>'
+  );
+}
 function levelCardHtml() {
   const levels = state.settings.levels;
-  const rows = levels
-    .map((l, i) => {
-      const label = l.id + " · " + l.name;
-      const swatches = COLOURS.map(
-        (c) =>
-          '<button type="button" class="swatch tag-' +
-          c +
-          (c === l.color ? " on" : "") +
-          '" data-lvl-i="' +
-          i +
-          '" data-lvl-colour="' +
-          c +
-          '" title="' +
-          c +
-          '" aria-label="' +
-          esc(l.name) +
-          ": " +
-          c +
-          '" aria-pressed="' +
-          (c === l.color) +
-          '"></button>',
-      ).join("");
-      return (
-        '<li class="opt-row"><span class="opt-name"><span class="pill tag-' +
-        l.color +
-        '">' +
-        esc(label) +
-        '</span></span><span class="swatches" role="group" aria-label="' +
-        esc(l.name) +
-        ' colour">' +
-        swatches +
-        '</span><button type="button" class="iconbtn opt-del" data-lvl-del="' +
-        i +
-        '" title="Remove ' +
-        esc(l.name) +
-        '" aria-label="Remove ' +
-        esc(l.name) +
-        '">✕</button></li>'
-      );
-    })
-    .join("");
+  const rows = levels.map((l, i) => levelRowHtml(l, i)).join("");
   return (
     '<div class="card"><div class="stat-t">Exercise levels <span class="opt-count">' +
     levels.length +
@@ -58,6 +57,21 @@ function levelCardHtml() {
     "</div>"
   );
 }
+function syncSettingsMeta() {
+  const count = $("#sec-settings .opt-count");
+  if (count) count.textContent = String(state.settings.levels.length);
+  const sub = $("#sec-settings .set-list .set-row:first-child .set-tx span");
+  if (sub) sub.innerHTML = storageLine();
+}
+function reindexLevelRows() {
+  document.querySelectorAll("#sec-settings .opt-list > .opt-row").forEach((row, idx) => {
+    row.querySelectorAll("[data-lvl-i]").forEach((b) => {
+      b.dataset.lvlI = String(idx);
+    });
+    const del = row.querySelector("[data-lvl-del]");
+    if (del) del.dataset.lvlDel = String(idx);
+  });
+}
 function renderSettings() {
   $("#sec-settings").innerHTML = levelCardHtml() + dataListHtml() + aboutListHtml();
 }
@@ -66,7 +80,16 @@ function setLevelColour(i, colour) {
   if (!l || !COLOURS.includes(colour)) return;
   l.color = colour;
   saveState();
-  render();
+  const row = document.querySelectorAll("#sec-settings .opt-list > .opt-row")[i];
+  if (!row) return renderSettings();
+  const pill = row.querySelector(".opt-name .pill");
+  if (pill) pill.className = "pill tag-" + colour;
+  row.querySelectorAll("[data-lvl-colour]").forEach((b) => {
+    const on = b.dataset.lvlColour === colour;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", String(on));
+  });
+  syncSettingsMeta();
 }
 async function removeLevel(i) {
   const l = state.settings.levels[i];
@@ -75,9 +98,16 @@ async function removeLevel(i) {
   const msg =
     "Remove “" + l.name + "”?\n\n" + plural(used, "exercise") + " use it and keep it.";
   if (used && !(await ask(msg, "Remove", true))) return;
-  state.settings.levels.splice(i, 1);
+  const idx = state.settings.levels.indexOf(l);
+  if (idx < 0) return;
+  state.settings.levels.splice(idx, 1);
   saveState();
-  render();
+  const row = document.querySelectorAll("#sec-settings .opt-list > .opt-row")[idx];
+  if (!row) return renderSettings();
+  row.classList.remove("opt-row");
+  reindexLevelRows();
+  syncSettingsMeta();
+  removeAnimated(row);
 }
 function addLevel(name) {
   const levels = state.settings.levels;
@@ -93,10 +123,20 @@ function addLevel(name) {
   );
   // the first colour no level uses yet, so a new one stands apart
   const color = COLOURS.find((c) => c !== "gray" && !levels.some((l) => l.color === c)) || "gray";
-  levels.push({ id: maxId + 1, name, color });
+  const lvl = { id: maxId + 1, name, color };
+  levels.push(lvl);
   saveState();
-  render();
-  $("#lvl-new")?.focus();
+  const list = $("#sec-settings .opt-list");
+  if (!list) return renderSettings();
+  const row = htmlToEl(levelRowHtml(lvl, levels.length - 1));
+  list.appendChild(row);
+  animateIn(row);
+  syncSettingsMeta();
+  const inp = $("#lvl-new");
+  if (inp) {
+    inp.value = "";
+    inp.focus({ preventScroll: true });
+  }
 }
 function openSettings() {
   if (modalOpen()) return; // a dialog is modal: the page stays put until it closes

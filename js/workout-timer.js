@@ -101,7 +101,7 @@ function globalTimerHtml() {
   const actLabel = run ? "Pause timer" : "Resume timer";
   return (
     '<span class="gtimer' + (run ? " running" : "") + '">' +
-    '<button type="button" class="gtimer-jump" title="Open ' + esc(where) + '">' +
+    '<button type="button" class="gtimer-jump" title="Open ' + esc(where) + (run ? " (C)" : "") + '">' +
     '<span class="gtimer-ico" aria-hidden="true">⏱</span>' +
     '<span class="gtimer-day">' + esc(act.day.name) + "</span>" +
     '<span class="gtimer-clock">' + clockFace(timerSecs(act.timer)) + "</span></button>" +

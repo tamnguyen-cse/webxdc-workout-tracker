@@ -138,7 +138,7 @@ function bindModal() {
         const to = +row.dataset.ex;
         const moved = items.splice(dnd.idx, 1)[0];
         items.splice(dnd.idx < to ? to - 1 : to, 0, moved);
-        render(); // the draft re-renders
+        renderModal(); // the draft re-renders without reloading the sheet
       } else {
         const c = cycById(cycUI.id);
         const day = c && c.days.find((x) => x.id === cycUI.dayId);

@@ -93,7 +93,7 @@ function bwPill(bw) {
     "</span>"
   );
 }
-function renderWorkout() {
+function renderWorkoutList() {
   const sec = $("#sec-workout");
   const q = (ui.q || "").trim().toLowerCase();
   // default order: by level, then name (0 mobility → 4 skill, alphabetical inside)
@@ -104,16 +104,6 @@ function renderWorkout() {
     list = list.filter((x) =>
       ((x.name || "") + " " + (x.notes || "")).toLowerCase().includes(q),
     );
-  setTools(
-    '<input id="wk-q" class="q" type="search" placeholder="Search…" value="' +
-      esc(ui.q || "") +
-      '">' +
-      '<div class="filters">' +
-      shelfSelect(state.exercises || []) +
-      colsSelect() +
-      "</div>" +
-      (shelfOn() ? "" : '<button class="btn primary" id="wk-new">+ New exercise</button>'),
-  );
   let h =
     '<div class="hint" style="margin-bottom:12px">The exercise library, sorted by level then name. Plan days and log entries only <b>reference</b> these, so names, levels, bodyweight, notes and videos are edited here and update everywhere at once; sets, targets and weight (kg) are set in each plan.</div>';
   if (!list.length)
@@ -163,7 +153,20 @@ function renderWorkout() {
       '">✕</button></div>';
   });
   sec.innerHTML = h + "</div>" + pager;
-  if (fitPage("workout", sec.querySelector(".grid"))) renderWorkout(); // page size follows the columns
+  if (fitPage("workout", sec.querySelector(".grid"))) renderWorkoutList(); // page size follows the columns
+}
+function renderWorkout() {
+  setTools(
+    '<input id="wk-q" class="q" type="search" placeholder="Search…" value="' +
+      esc(ui.q || "") +
+      '">' +
+      '<div class="filters">' +
+      shelfSelect(state.exercises || []) +
+      colsSelect() +
+      "</div>" +
+      (shelfOn() ? "" : '<button class="btn primary" id="wk-new">+ New exercise</button>'),
+  );
+  renderWorkoutList();
 }
 const COLS_KEY = "workout-tracker-cols";
 const VIEWS = [
@@ -214,15 +217,12 @@ function bindTools() {
   });
 }
 function bindWorkout() {
-  // search: keep the query in ui so re-renders preserve it; refocus after each render
+  // search: update only the list so #wk-q stays mounted and keeps focus/selection
   $("#tab-tools").addEventListener("input", (e) => {
     if (e.target.id !== "wk-q") return;
     ui.q = e.target.value;
     resetPage("workout");
-    render();
-    const inp = $("#wk-q");
-    inp.focus();
-    inp.setSelectionRange(inp.value.length, inp.value.length);
+    renderWorkoutList();
   });
   $("#sec-workout").addEventListener("click", (e) => {
     const el = e.target;

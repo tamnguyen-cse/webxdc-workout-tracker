@@ -47,27 +47,12 @@ function tplExBadgesHtml(x) {
     "</span>"
   );
 }
-function tplExCardHtml(it, di, xi) {
-  const x = exById(it.ex);
+function tplExFieldsHtml(it, di, xi, x) {
   const time = isTime(x);
   const bw = !!(x && x.bw);
   const attrs = ' data-day="' + di + '" data-ex="' + xi + '"';
   return (
-    '<div class="ex pex dnd-row"' +
-    attrs +
-    (TOUCH ? ' draggable="true"' : "") +
-    '><div class="ex-head pex-head">' +
-    '<span class="grip" draggable="true" title="Drag to reorder">⠿</span>' +
-    '<select class="pe-pick"' +
-    attrs +
-    ' aria-label="Exercise">' +
-    libOptions(it.ex) +
-    "</select>" +
-    tplExBadgesHtml(x) +
-    '<button type="button" class="iconbtn pe-del"' +
-    attrs +
-    ' title="Remove from this day (the exercise itself stays in Workout)" aria-label="Remove exercise">✕</button>' +
-    '</div><div class="pex-fields">' +
+    '<div class="pex-fields">' +
     '<label class="pex-field"><span>Sets</span>' +
     '<input class="pe-sets"' +
     attrs +
@@ -101,7 +86,30 @@ function tplExCardHtml(it, di, xi) {
     esc(it.notes || "") +
     '" placeholder="' +
     esc((x && x.notes) || "Notes…") +
-    '"></label></div></div>'
+    '"></label></div>'
+  );
+}
+function tplExCardHtml(it, di, xi) {
+  const x = exById(it.ex);
+  const attrs = ' data-day="' + di + '" data-ex="' + xi + '"';
+  return (
+    '<div class="ex pex dnd-row"' +
+    attrs +
+    (TOUCH ? ' draggable="true"' : "") +
+    '><div class="ex-head pex-head">' +
+    '<span class="grip" draggable="true" title="Drag to reorder">⠿</span>' +
+    '<select class="pe-pick"' +
+    attrs +
+    ' aria-label="Exercise">' +
+    libOptions(it.ex) +
+    "</select>" +
+    tplExBadgesHtml(x) +
+    '<button type="button" class="iconbtn pe-del"' +
+    attrs +
+    ' title="Remove from this day (the exercise itself stays in Workout)" aria-label="Remove exercise">✕</button>' +
+    "</div>" +
+    tplExFieldsHtml(it, di, xi, x) +
+    "</div>"
   );
 }
 function tplQuickExHtml(q) {
@@ -131,6 +139,18 @@ function tplQuickExHtml(q) {
     "</div></div>"
   );
 }
+const tplEmptyHtml = () => '<div class="card hint pex-empty">No exercises in this day yet.</div>';
+function tplDayFootHtml(di) {
+  return (
+    '<div class="day-foot">' +
+    '<button type="button" class="btn pl-addex" data-day="' +
+    di +
+    '">+ Add exercise</button>' +
+    '<button type="button" class="btn pl-quickex" data-day="' +
+    di +
+    '">+ New workout</button></div>'
+  );
+}
 function tplDayBodyHtml(day, di) {
   const items = day.items || [];
   let h =
@@ -147,18 +167,9 @@ function tplDayBodyHtml(day, di) {
     '" title="Delete day" aria-label="Delete day">✕</button></span></div>';
   h += items.length
     ? items.map((it, xi) => tplExCardHtml(it, di, xi)).join("")
-    : '<div class="card hint">No exercises in this day yet.</div>';
+    : tplEmptyHtml();
   if (tplUI.quickEx) return h + tplQuickExHtml(tplUI.quickEx);
-  return (
-    h +
-    '<div class="day-foot">' +
-    '<button type="button" class="btn pl-addex" data-day="' +
-    di +
-    '">+ Add exercise</button>' +
-    '<button type="button" class="btn pl-quickex" data-day="' +
-    di +
-    '">+ New workout</button></div>'
-  );
+  return h + tplDayFootHtml(di);
 }
 function tplModalHtml() {
   const t = tplById(tplUI.id);
@@ -196,6 +207,78 @@ function tplModalHtml() {
     extra,
   });
 }
+/* Re-index data-ex on a day's remaining cards after an in-place removal. */
+function tplReindexDay(di) {
+  modalRoot()
+    .querySelectorAll('.pex[data-day="' + di + '"]')
+    .forEach((card, xi) => {
+      card.dataset.ex = String(xi);
+      card.querySelectorAll("[data-ex]").forEach((el) => {
+        el.dataset.ex = String(xi);
+      });
+    });
+}
+function tplAddEx(di) {
+  const day = tplUI.draft.days[di];
+  if (!day) return;
+  const first = live(state.exercises).sort((a, b) => a.name.localeCompare(b.name))[0];
+  const it = { ex: first ? first.id : "" };
+  day.items.push(it);
+  const xi = day.items.length - 1;
+  const root = modalRoot();
+  const foot = root.querySelector(".day-foot") || root.querySelector(".qex");
+  if (!foot) return renderModal();
+  root.querySelector(".pex-empty")?.remove();
+  const card = htmlToEl(tplExCardHtml(it, di, xi));
+  foot.before(card);
+  animateIn(card);
+  card.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "nearest" });
+}
+function tplDelEx(di, xi, card) {
+  const day = tplUI.draft.days[di];
+  if (!day) return;
+  const dayId = day.id;
+  day.items.splice(xi, 1);
+  if (!card) return renderModal();
+  card.classList.remove("pex", "dnd-row");
+  delete card.dataset.day;
+  delete card.dataset.ex;
+  tplReindexDay(di);
+  removeAnimated(card, () => {
+    if (!tplUI || tplUI.dayId !== dayId || day.items.length) return;
+    const root = modalRoot();
+    if (root.querySelector(".pex-empty")) return;
+    const foot = root.querySelector(".day-foot") || root.querySelector(".qex");
+    if (!foot) return;
+    const empty = htmlToEl(tplEmptyHtml());
+    foot.before(empty);
+    animateIn(empty);
+  });
+}
+function tplOpenQuickEx() {
+  tplUI.quickEx = { name: "", bw: false, notes: "" };
+  const foot = modalRoot().querySelector(".day-foot");
+  if (!foot) {
+    renderModal();
+  } else {
+    const qex = htmlToEl(tplQuickExHtml(tplUI.quickEx));
+    foot.replaceWith(qex);
+    animateIn(qex);
+    shortcutTitles();
+    qex.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "nearest" });
+  }
+  const inp = $("#qex-name");
+  if (inp) inp.focus({ preventScroll: true });
+}
+function tplCloseQuickEx() {
+  tplUI.quickEx = null;
+  const di = tplUI.draft.days.findIndex((day) => day.id === tplUI.dayId);
+  const qex = modalRoot().querySelector(".qex");
+  if (!qex || di < 0) return renderModal();
+  const foot = htmlToEl(tplDayFootHtml(di));
+  qex.replaceWith(foot);
+  animateIn(foot);
+}
 /* Quick-create a library exercise from inside the plan editor (name, type, note) and
    immediately append it to the active plan day. The library entry persists right away;
    the plan day addition still commits on Plan Save. */
@@ -220,16 +303,39 @@ function tplQuickCreate() {
   };
   state.exercises.push(ex);
   saveState();
+  if (ui.tab === "workout") renderWorkout();
+  $("#page-sub").textContent = pageSummary();
   tplUI.quickEx = null;
+  const root = modalRoot();
+  root.querySelectorAll(".pe-pick").forEach((sel) => {
+    const cur = sel.value;
+    sel.innerHTML = libOptions(cur);
+  });
   let xi = -1;
+  let card = null;
   if (di >= 0) {
-    d.days[di].items.push({ ex: ex.id });
+    const it = { ex: ex.id };
+    d.days[di].items.push(it);
     xi = d.days[di].items.length - 1;
+    const qex = root.querySelector(".qex");
+    if (qex) {
+      root.querySelector(".pex-empty")?.remove();
+      card = htmlToEl(tplExCardHtml(it, di, xi));
+      const foot = htmlToEl(tplDayFootHtml(di));
+      qex.replaceWith(card, foot);
+      animateIn(card);
+      card.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "nearest" });
+    } else {
+      renderModal();
+    }
+  } else {
+    renderModal();
   }
-  render();
   if (di >= 0 && xi >= 0) {
-    const setsIn = modalRoot().querySelector('.pe-sets[data-day="' + di + '"][data-ex="' + xi + '"]');
-    if (setsIn) setsIn.focus();
+    const setsIn =
+      (card && card.querySelector(".pe-sets")) ||
+      root.querySelector('.pe-sets[data-day="' + di + '"][data-ex="' + xi + '"]');
+    if (setsIn) setsIn.focus({ preventScroll: true });
   }
 }
 /* The plan editor works on a draft: Save writes it to the version being edited — or adds
@@ -329,7 +435,16 @@ function tplChange(e) {
     delete it.reps;
     delete it.wt;
     delete it.notes;
-    render();
+    const card = el.closest(".pex");
+    if (!card) return renderModal();
+    const x = exById(it.ex);
+    const head = card.querySelector(".pex-head");
+    const oldBadges = head && head.querySelector(".pex-badges");
+    const newBadges = htmlToEl(tplExBadgesHtml(x));
+    if (oldBadges && newBadges) oldBadges.replaceWith(newBadges);
+    else if (oldBadges) oldBadges.remove();
+    else if (newBadges && head) head.querySelector(".pe-del")?.before(newBadges);
+    card.querySelector(".pex-fields")?.replaceWith(htmlToEl(tplExFieldsHtml(it, di, xi, x)));
   }
 }
 function tplClick(e) {
@@ -340,7 +455,7 @@ function tplClick(e) {
   if (chip) {
     tplUI.dayId = chip.dataset.day;
     tplUI.quickEx = null;
-    render();
+    renderModal();
     return;
   }
   if (el.closest("#tpl-dayup") || el.closest("#tpl-daydown")) {
@@ -354,7 +469,7 @@ function tplClick(e) {
     d.days.push(nd);
     tplUI.dayId = nd.id;
     tplUI.quickEx = null;
-    render();
+    renderModal();
     return;
   }
   const pd = el.closest(".pl-delday");
@@ -364,19 +479,15 @@ function tplClick(e) {
     const next = d.days[Math.min(idx, d.days.length - 1)] || null;
     tplUI.dayId = next ? next.id : null;
     tplUI.quickEx = null;
-    render();
+    renderModal();
     return;
   }
   if (el.closest(".pl-quickex")) {
-    tplUI.quickEx = { name: "", bw: false, notes: "" };
-    render();
-    const inp = $("#qex-name");
-    if (inp) inp.focus();
+    tplOpenQuickEx();
     return;
   }
   if (el.closest(".qex-cancel")) {
-    tplUI.quickEx = null;
-    render();
+    tplCloseQuickEx();
     return;
   }
   if (el.closest("#qex-create")) {
@@ -385,15 +496,12 @@ function tplClick(e) {
   }
   const pa = el.closest(".pl-addex");
   if (pa) {
-    const first = live(state.exercises).sort((a, b) => a.name.localeCompare(b.name))[0];
-    d.days[+pa.dataset.day].items.push({ ex: first ? first.id : "" });
-    render();
+    tplAddEx(+pa.dataset.day);
     return;
   }
   const px = el.closest(".pe-del");
   if (px) {
-    d.days[+px.dataset.day].items.splice(+px.dataset.ex, 1);
-    render();
+    tplDelEx(+px.dataset.day, +px.dataset.ex, px.closest(".pex"));
     return;
   }
   if (el.closest("#tpl-default")) {

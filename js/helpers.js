@@ -59,3 +59,69 @@ function fmtSecs(n) {
   if (m) return m + ":" + String(s % 60).padStart(2, "0");
   return s + "s";
 }
+/* Parse a single HTML element without touching the live DOM. */
+function htmlToEl(html) {
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+/* Subtle entrance animation for an item inserted in place (respects reduced motion). */
+function animateIn(el) {
+  if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  el.classList.add("item-in");
+  const clean = () => el.classList.remove("item-in");
+  el.addEventListener("animationend", clean, { once: true });
+  setTimeout(clean, 260);
+}
+/* Smoothly collapse and remove an item in place; axis "y" for cards/rows, "x" for inline sets. */
+function removeAnimated(el, onDone, axis) {
+  if (!el) return;
+  el.style.pointerEvents = "none";
+  el.setAttribute("aria-hidden", "true");
+  const finish = () => {
+    if (done) return;
+    done = true;
+    el.remove();
+    if (onDone) onDone();
+  };
+  let done = false;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return finish();
+  if (axis === "x") {
+    const w = el.offsetWidth;
+    if (!w) return finish();
+    el.style.width = w + "px";
+    el.style.minWidth = "0";
+    el.style.overflow = "hidden";
+    void el.offsetWidth;
+    el.classList.add("item-out");
+    el.style.width = "0";
+    el.style.paddingLeft = "0";
+    el.style.paddingRight = "0";
+    el.style.borderLeftWidth = "0";
+    el.style.borderRightWidth = "0";
+    el.style.marginLeft = "0";
+    el.style.marginRight = "0";
+    el.style.opacity = "0";
+  } else {
+    const h = el.offsetHeight;
+    if (!h) return finish();
+    el.style.boxSizing = "border-box";
+    el.style.height = h + "px";
+    el.style.minHeight = "0";
+    el.style.overflow = "hidden";
+    void el.offsetHeight;
+    el.classList.add("item-out");
+    el.style.height = "0";
+    el.style.paddingTop = "0";
+    el.style.paddingBottom = "0";
+    el.style.marginTop = "0";
+    el.style.marginBottom = "0";
+    el.style.borderTopWidth = "0";
+    el.style.borderBottomWidth = "0";
+    el.style.opacity = "0";
+  }
+  el.addEventListener("transitionend", (e) => {
+    if (e.target === el) finish();
+  });
+  setTimeout(finish, 240);
+}

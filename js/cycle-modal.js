@@ -65,6 +65,22 @@ function cycDraft() {
   cycUI.draftKey = key;
   return draft;
 }
+function cycBannerHtml(existing, prev) {
+  return (
+    '<div class="card banner"><span class="lvl ' +
+    (existing ? "tag-blue" : "tag-green") +
+    '">' +
+    (existing ? "Logged " + esc(existing.date) : "New session") +
+    "</span>" +
+    '<span class="hint">' +
+    (existing
+      ? "This day is logged once per cycle — Save overwrites it."
+      : prev
+        ? "Weights from " + esc(prev.c.name) + " · " + esc(prev.s.date) + "."
+        : "Nothing logged for this day before.") +
+    '</span><button class="btn" id="cyc-clear">Clear</button></div>'
+  );
+}
 function cycModalHtml() {
   const c = cycById(cycUI.id);
   if (!c) {
@@ -120,19 +136,7 @@ function cycModalHtml() {
     (ci < 0 || ci >= c.days.length - 1 ? " disabled" : "") +
     ' title="Move this day right">→</button>';
   h += "</div>";
-  h +=
-    '<div class="card banner"><span class="lvl ' +
-    (existing ? "tag-blue" : "tag-green") +
-    '">' +
-    (existing ? "Logged " + esc(existing.date) : "New session") +
-    "</span>" +
-    '<span class="hint">' +
-    (existing
-      ? "This day is logged once per cycle — Save overwrites it."
-      : prev
-        ? "Weights from " + esc(prev.c.name) + " · " + esc(prev.s.date) + "."
-        : "Nothing logged for this day before.") +
-    '</span><button class="btn" id="cyc-clear">Clear</button></div>';
+  h += cycBannerHtml(existing, prev);
   (day ? day.items : []).forEach((it) => {
     const x = exById(it.ex);
     const en = draft[slotOf(it)];
@@ -267,7 +271,7 @@ function cycChange(e) {
   const el = e.target;
   if (el.id === "cyc-date") {
     cycUI.date = el.value || today();
-    render();
+    if (el.value !== cycUI.date) el.value = cycUI.date;
     return;
   }
   if (el.id === "cyc-timer") {
@@ -276,7 +280,7 @@ function cycChange(e) {
   }
   if (el.classList.contains("ex-skip")) {
     cycUI.draft[el.dataset.ex].skip = el.checked;
-    render();
+    el.closest(".ex")?.classList.toggle("skip", el.checked);
   }
 }
 /* Save also commits a renamed cycle; Esc or ✕ drops both. A save that goes
@@ -322,13 +326,66 @@ function sessionDur(c) {
   if (isTimerDay(c, dayId) && !timer.since) clearTimer();
   return dur;
 }
+function cycAddSet(c, btn) {
+  const slot = btn.dataset.ex;
+  const en = cycUI.draft && cycUI.draft[slot];
+  const day = c.days.find((d) => d.id === cycUI.dayId);
+  const it = day && (day.items || []).find((i) => slotOf(i) === slot);
+  if (!en || !it) return;
+  en.sets.push("");
+  const inp = htmlToEl(setInput(it, exById(it.ex), en, en.sets.length - 1));
+  btn.before(inp);
+  animateIn(inp);
+}
+function cycDelSet(btn) {
+  const slot = btn.dataset.ex;
+  const en = cycUI.draft && cycUI.draft[slot];
+  if (!en || en.sets.length <= 1) return;
+  en.sets.pop();
+  keepExpr(en, "sets." + en.sets.length, "");
+  const box = btn.closest(".sets");
+  const inputs = box ? [...box.querySelectorAll("input.set-in")] : [];
+  const last = inputs[inputs.length - 1];
+  if (!last) return renderModal();
+  last.classList.remove("set-in");
+  delete last.dataset.i;
+  removeAnimated(last, null, "x");
+}
+function cycDelHistory(c, btn) {
+  const date = btn.dataset.date;
+  const dayId = btn.dataset.dayid;
+  c.sessions = c.sessions.filter((s) => !(s.date === date && s.dayId === dayId));
+  saveState();
+  if (ui.tab === "log") renderLog();
+  $("#page-sub").textContent = pageSummary();
+  const root = modalRoot();
+  if (!daySession(c, dayId)) {
+    const chip = [...root.querySelectorAll(".chip[data-day]")].find((b) => b.dataset.day === dayId);
+    chip?.querySelector('[aria-label="logged"]')?.remove();
+  }
+  if (dayId === cycUI.dayId) {
+    const existing = daySession(c, cycUI.dayId);
+    const prev = existing ? null : lastDayLog(c, cycUI.dayId);
+    root.querySelector(".card.banner")?.replaceWith(htmlToEl(cycBannerHtml(existing, prev)));
+  }
+  const row = btn.closest(".hist-row");
+  if (!row) return renderModal();
+  row.classList.remove("hist-row");
+  removeAnimated(row, () => {
+    const hist = root.querySelector(".hist");
+    if (hist && !hist.querySelector(".hist-row")) {
+      root.querySelector(".hist-h")?.remove();
+      hist.remove();
+    }
+  });
+}
 function cycClick(e) {
   const c = cycById(cycUI.id);
   const el = e.target;
   const chip = el.closest(".chip[data-day]");
   if (chip) {
     pickDay(c, chip.dataset.day);
-    render();
+    renderModal();
     return;
   }
   if (el.closest("#cyc-dayup") || el.closest("#cyc-daydown")) {
@@ -343,23 +400,17 @@ function cycClick(e) {
   }
   if (el.closest("#cyc-clear")) {
     cycUI.draft = blankDraft(c.days.find((d) => d.id === cycUI.dayId));
-    render();
+    renderModal();
     return;
   }
   const as = el.closest(".add-set");
   if (as) {
-    cycUI.draft[as.dataset.ex].sets.push("");
-    render();
+    cycAddSet(c, as);
     return;
   }
   const ds = el.closest(".del-set");
   if (ds) {
-    const en = cycUI.draft[ds.dataset.ex];
-    if (en.sets.length > 1) {
-      en.sets.pop();
-      keepExpr(en, "sets." + en.sets.length, "");
-    }
-    render();
+    cycDelSet(ds);
     return;
   }
   if (el.closest("#cyc-save")) {
@@ -367,11 +418,5 @@ function cycClick(e) {
     return;
   }
   const hd = el.closest(".hs-del");
-  if (hd) {
-    c.sessions = c.sessions.filter(
-      (s) => !(s.date === hd.dataset.date && s.dayId === hd.dataset.dayid),
-    );
-    saveState();
-    render();
-  }
+  if (hd) cycDelHistory(c, hd);
 }

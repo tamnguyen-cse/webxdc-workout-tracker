@@ -126,17 +126,23 @@ function exModalHtml() {
     bar: acts,
   });
 }
+/* Repaint only the video link control in place so editing it never redraws the sheet. */
+function exVideoRepaint() {
+  const cur = modalRoot().querySelector(".vref");
+  if (!cur) return renderModal();
+  cur.replaceWith(htmlToEl(exVideoHtml()));
+}
 /* Commit the link being edited: empty removes it, a bare domain gets https:// */
 function exVideoCommit() {
   const inp = $("#ex-video");
   const v = inp ? inp.value.trim() : exUI.draft.video;
   exUI.draft.video = v && !/^https?:\/\//i.test(v) ? "https://" + v : v;
   exUI.vEdit = false;
-  renderModal();
+  exVideoRepaint();
 }
 function exVideoEdit(on) {
   exUI.vEdit = on;
-  renderModal();
+  exVideoRepaint();
   const inp = $("#ex-video");
   if (inp) inp.focus();
 }
@@ -160,7 +166,7 @@ function exClick(e) {
   if (el.closest("#ex-v-ok")) return exVideoCommit();
   if (el.closest("#ex-v-del")) {
     exUI.draft.video = "";
-    renderModal();
+    exVideoRepaint();
     return;
   }
   if (el.closest("#ex-save")) {

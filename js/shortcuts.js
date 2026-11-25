@@ -6,6 +6,7 @@ const SHORTCUTS = [
   ["Anywhere", [
     ["1 – 5", "Switch tab: Log · Plan · Workout · Personal · Analytics"],
     [",", "Settings"],
+    ["C", "Continue the session with a playing timer"],
     ["E", "Personal tab: edit body data"],
     ["N", "New cycle / plan / exercise on the current tab"],
     ["/", "Focus search (Workout tab)"],
@@ -76,15 +77,28 @@ function deleteRow(row) {
   clickFirst(DELETE_IDS);
   if (modalOpen()) closeModal();
 }
+function continuePlayingSession() {
+  const act = activeTimer();
+  if (!act || !act.timer.since) return false;
+  const btn = document.querySelector(
+    modalOpen() ? "#modal-timer .gtimer-jump" : "#hdr-timer .gtimer-jump",
+  );
+  if (btn) btn.click();
+  else jumpToTimer();
+  return true;
+}
 function onDialogKey(e) {
   const mod = e.metaKey || e.ctrlKey;
   if (e.key === "Escape") {
     if (tplUI && tplUI.quickEx) {
-      tplUI.quickEx = null;
-      render();
+      tplCloseQuickEx();
       return;
     }
     return cancelModal();
+  }
+  if (!mod && !e.altKey && !isTyping(e.target) && (e.key === "c" || e.key === "C")) {
+    if (continuePlayingSession()) e.preventDefault();
+    return;
   }
   // D duplicates the record being viewed (presses the same button the mouse does)
   if (
@@ -135,7 +149,9 @@ function onPageKey(e) {
     ui.tab = TAB_KEYS[+k - 1];
     render();
   } else if (k === ",") openSettings();
-  else if (k === "n" || k === "N") clickFirst([NEW_IDS[ui.tab]]);
+  else if (k === "c" || k === "C") {
+    if (!continuePlayingSession()) return;
+  } else if (k === "n" || k === "N") clickFirst([NEW_IDS[ui.tab]]);
   else if (k === "/" && $("#wk-q")) $("#wk-q").focus();
   else if ((k === "e" || k === "E") && !row && ui.tab === "personal") clickFirst(["pd-edit"]);
   else if (k === "?") openHelp();

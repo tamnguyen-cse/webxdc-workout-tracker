@@ -5,6 +5,7 @@
   box-shadow: var(--shadow-card);
   padding: 14px 16px;
   margin-bottom: 12px;
+  transition: opacity 0.16s ease;
 }
 .ex.skipped,
 .ex.skip {

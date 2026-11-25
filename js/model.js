@@ -105,8 +105,12 @@ function moveDay(from, to) {
     list = c ? c.days : null;
   }
   if (!list || !reorderDays(list, from, to)) return;
-  if (cycUI) saveState();
-  render();
+  if (cycUI) {
+    saveState();
+    render();
+  } else {
+    renderModal();
+  }
 }
 
 /* ---- ui state ---- */

@@ -184,6 +184,43 @@ function focusedFieldSelector(root) {
   const ds = ["day", "ex", "i"].filter((k) => el.dataset[k] !== undefined);
   return "." + cls + ds.map((k) => "[data-" + k + '="' + el.dataset[k] + '"]').join("");
 }
+/* Keep .modal-bg and .modal mounted while a dialog is open so updates never replay the
+   sheet-up / pop-in / fade-in entrance animation. Only opening from closed mounts fresh. */
+function mountModal(root, html, same, barHide) {
+  if (!html) {
+    root.innerHTML = "";
+    return;
+  }
+  const existing = root.querySelector(".modal");
+  if (!existing) {
+    root.innerHTML = html;
+    return;
+  }
+  const tmp = document.createElement("template");
+  tmp.innerHTML = html;
+  const next = tmp.content.querySelector(".modal");
+  if (!next) {
+    root.innerHTML = html;
+    return;
+  }
+  existing.className = next.className;
+  existing.setAttribute("aria-label", next.getAttribute("aria-label") || "");
+  const oldBar = existing.querySelector(".modal-bar");
+  const newBar = next.querySelector(".modal-bar");
+  const oldBody = existing.querySelector(".modal-body");
+  const newBody = next.querySelector(".modal-body");
+  if (oldBar && newBar) {
+    oldBar.className = newBar.className;
+    if (same && barHide) oldBar.classList.add("bar-hide");
+    oldBar.replaceChildren(...newBar.childNodes);
+  }
+  if (oldBody && newBody) {
+    oldBody.replaceChildren(...newBody.childNodes);
+    if (!same) oldBody.scrollTop = 0;
+  } else {
+    existing.replaceChildren(...next.childNodes);
+  }
+}
 function renderModal() {
   const root = modalRoot();
   const key = modalKey();
@@ -192,18 +229,18 @@ function renderModal() {
   const scroll = same && body ? body.scrollTop : 0;
   const barHide = same && !!root.querySelector(".modal-bar.bar-hide");
   const focusSel = same ? focusedFieldSelector(root) : "";
-  if (tplUI) root.innerHTML = tplModalHtml();
-  else if (cycUI) root.innerHTML = cycModalHtml();
-  else if (exUI) root.innerHTML = exModalHtml();
-  else if (pdUI) root.innerHTML = pdModalHtml();
-  else if (viewUI) root.innerHTML = viewModalHtml();
-  else if (helpUI) root.innerHTML = helpModalHtml();
-  else if (infoUI) root.innerHTML = infoModalHtml();
-  else root.innerHTML = "";
-  shownModal = key;
+  let html = "";
+  if (tplUI) html = tplModalHtml();
+  else if (cycUI) html = cycModalHtml();
+  else if (exUI) html = exModalHtml();
+  else if (pdUI) html = pdModalHtml();
+  else if (viewUI) html = viewModalHtml();
+  else if (helpUI) html = helpModalHtml();
+  else if (infoUI) html = infoModalHtml();
+  mountModal(root, html, same, barHide);
+  shownModal = html ? modalKey() : "";
   lastModalY = same ? scroll : 0;
   if (same) {
-    if (barHide) root.querySelector(".modal-bar")?.classList.add("bar-hide");
     const nb = root.querySelector(".modal-body");
     if (nb) nb.scrollTop = scroll;
     const f = focusSel && root.querySelector(focusSel);

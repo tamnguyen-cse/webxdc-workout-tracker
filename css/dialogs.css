@@ -41,6 +41,24 @@
     transform: translateY(100%);
   }
 }
+@keyframes item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.item-in {
+  animation: item-in 0.18s var(--ease);
+}
+.item-out {
+  transition:
+    opacity 0.16s ease,
+    height 0.18s var(--ease),
+    width 0.18s var(--ease),
+    margin 0.18s var(--ease),
+    padding 0.18s var(--ease),
+    border-width 0.18s var(--ease);
+}
 /* phone tab swipe (js/tab-swipe.js): still copies of this tab and its neighbours
    slide over a black stage; the real tab bar stays on top. Square edges: inside a host app's
    web view, rounded panes read as a second frame and cost more to draw while dragging. */
@@ -75,8 +93,12 @@
   .modal,
   .ask-bg,
   .ask,
-  .menu {
+  .menu,
+  .item-in {
     animation: none;
+  }
+  .item-out {
+    transition: none;
   }
 }
 /* a dialog is open: the page behind it cannot scroll, so iOS has one scroll box, not three */
