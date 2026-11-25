@@ -17,17 +17,15 @@ const ABOUT = {
     "Archive exercises, plans and cycles you no longer use; their history stays.",
   ],
 };
-/* Versions were numbered on 2026-11-22, from the milestones in README.md's Decisions table. */
+/* 0.x versions are the milestones before the first public release (1.0.0). */
 const CHANGES = [
   {
-    v: "2.1.0",
+    v: "1.0.0",
     date: "2026-11-25",
-    what:
-      "First public release: a fresh install starts empty, ready for your own exercises " +
-      "and plans.",
+    what: "First public release: a fresh install starts empty, ready for your own exercises.",
   },
   {
-    v: "2.0.0",
+    v: "0.8.0",
     date: "2026-11-22",
     what:
       "Runs as a Delta Chat mini app: data stays on the device, with backup, restore and " +
@@ -35,39 +33,39 @@ const CHANGES = [
       "on each exercise, day tabs in the plan editor.",
   },
   {
-    v: "1.6.0",
+    v: "0.7.0",
     date: "2026-11-21",
     what: "Settings page with editable exercise levels, and the new indigo look.",
   },
   {
-    v: "1.5.0",
+    v: "0.6.0",
     date: "2026-11-17",
     what: "One workout timer for the whole app, recorded on each session.",
   },
   {
-    v: "1.4.0",
+    v: "0.5.0",
     date: "2026-11-07",
     what:
       "Archive, cycles marked Done, the same exercise twice in one day, average reps and " +
       "weight in Analytics.",
   },
   {
-    v: "1.3.0",
+    v: "0.4.0",
     date: "2026-10-31",
     what: "Personal tab with body data and BMI, BMR and calorie calculators.",
   },
   {
-    v: "1.2.0",
+    v: "0.3.0",
     date: "2026-10-09",
     what: "Exercises counted by time, duplicate plans, and a View picker for lists.",
   },
   {
-    v: "1.1.0",
+    v: "0.2.0",
     date: "2026-09-24",
     what: "Workout exercise library, keyboard shortcuts, and light / dark themes.",
   },
   {
-    v: "1.0.0",
+    v: "0.1.0",
     date: "2026-09-22",
     what: "First version: plans, cycles and set logging.",
   },
