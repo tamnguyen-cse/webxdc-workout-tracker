@@ -1,0 +1,132 @@
+/* ---------- blocks / cards ---------- */
+.card {
+  background: var(--card);
+  border-radius: var(--rl);
+  box-shadow: var(--shadow-card);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  transition:
+    transform 0.1s,
+    box-shadow 0.15s;
+}
+/* ---------- inputs: soft filled fields, accent border + ring on focus ---------- */
+select,
+input[type="date"],
+input[type="text"],
+input[type="number"],
+input[type="search"],
+input:not([type]),
+textarea {
+  font: inherit;
+  font-size: 14.5px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--rs);
+  background-color: var(--input);
+  color: var(--text);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background-color 0.15s;
+}
+select:hover,
+input[type="date"]:hover,
+input[type="text"]:hover,
+input[type="number"]:hover,
+input[type="search"]:hover,
+input:not([type]):hover,
+textarea:hover {
+  border-color: var(--border-strong);
+}
+::placeholder {
+  color: var(--faint);
+}
+/* formula input (js/formula-input.js): a red ring while the text can't be worked out */
+input.calc[aria-invalid="true"],
+input.calc[aria-invalid="true"]:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px var(--red-soft);
+}
+/* own chevron: the native one sits flush against the edge and ignores the theme */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 30px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--faint) 50%),
+    linear-gradient(135deg, var(--faint) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+textarea {
+  height: auto;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+select:focus,
+input:focus,
+textarea:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+select:focus,
+input:focus,
+textarea:focus {
+  border-color: var(--acc);
+  background-color: var(--pop);
+}
+input[type="checkbox"] {
+  accent-color: var(--acc);
+}
+/* ---------- day selector chips ---------- */
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  align-items: center;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 99px;
+  border: 1px solid var(--border-strong);
+  background: var(--card);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 580;
+  font-family: inherit;
+  color: var(--muted);
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+.chip:hover {
+  background: var(--bg-side);
+  color: var(--text);
+}
+.chip.on {
+  background: var(--press);
+  color: var(--text);
+  border-color: transparent;
+  font-weight: 650;
+}
+.chip.chip-add {
+  border-style: dashed;
+  background: transparent;
+}
+.chip.chip-add:hover {
+  background: var(--bg-side);
+  border-color: var(--acc);
+  color: var(--acc);
+}

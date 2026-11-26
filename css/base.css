@@ -1,0 +1,197 @@
+/* ---------- theme tokens (light, then dark) and page base ---------- */
+:root {
+  color-scheme: light;
+  /* ink */
+  --text: #141729;
+  --muted: #4b5168;
+  --faint: #80869c;
+  /* surfaces */
+  --bg: #f5f6fb; /* page */
+  --bg-side: #f0f1f8; /* soft fill: search, hovers, banners */
+  --bg-deep: #e6e8f2;
+  --card: #ffffff;
+  --pop: #ffffff; /* dialogs, menus */
+  --hover: rgba(20, 23, 41, 0.05);
+  --press: rgba(20, 23, 41, 0.09);
+  --border: rgba(20, 23, 41, 0.08);
+  --border-strong: rgba(20, 23, 41, 0.14);
+  --shadow-modal: 0 10px 40px rgba(18, 22, 48, 0.18);
+  --shadow-card: 0 0 0 1px var(--border), 0 1px 2px rgba(18, 22, 48, 0.05),
+    0 2px 8px rgba(18, 22, 48, 0.04);
+  --shadow-card-hover: 0 0 0 1px var(--border-strong), 0 2px 6px rgba(18, 22, 48, 0.06),
+    0 12px 32px rgba(18, 22, 48, 0.09);
+  --scrim: rgba(12, 14, 28, 0.42);
+  /* accent */
+  --input: #f0f1f8;
+  --acc: #5146e0;
+  --acc-hover: #463bd1;
+  --acc-ink: #ffffff;
+  --acc-soft: rgba(81, 70, 224, 0.1);
+  --acc-glow: 0 6px 16px -6px rgba(81, 70, 224, 0.55);
+  --ring: 0 0 0 3px rgba(81, 70, 224, 0.22);
+  --red: #d12b5e;
+  --red-soft: rgba(209, 43, 94, 0.1);
+  --series-2: #ea580c; /* second chart series (avg weight) */
+  --series-3: #16a34a; /* third chart series (strength) */
+  /* select pills: ten Prism tints (soft fill, strong text), matching healthy-kitchen */
+  --tag-gray-bg: rgba(71, 85, 105, 0.11);
+  --tag-gray-tx: #475569;
+  --tag-green-bg: rgba(22, 163, 74, 0.11);
+  --tag-green-tx: #15803d;
+  --tag-cyan-bg: rgba(13, 148, 136, 0.11);
+  --tag-cyan-tx: #0f766e;
+  --tag-blue-bg: rgba(37, 99, 235, 0.1);
+  --tag-blue-tx: #2563eb;
+  --tag-purple-bg: rgba(124, 77, 255, 0.11);
+  --tag-purple-tx: #6d3df5;
+  --tag-orange-bg: rgba(234, 88, 12, 0.11);
+  --tag-orange-tx: #c2410c;
+  --tag-red-bg: rgba(220, 38, 38, 0.1);
+  --tag-red-tx: #dc2626;
+  --tag-yellow-bg: rgba(234, 160, 20, 0.15);
+  --tag-yellow-tx: #a16207;
+  --tag-brown-bg: rgba(154, 91, 46, 0.13);
+  --tag-brown-tx: #8a4b1f;
+  --tag-pink-bg: rgba(219, 39, 119, 0.1);
+  --tag-pink-tx: #db2777;
+  --rl: 18px; /* cards */
+  --r: 14px; /* menus, blocks */
+  --rs: 10px; /* fields, row hovers */
+  --rxl: 24px; /* dialogs */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --swipe-gap: #000000;
+  --rail: 92px;
+  --tabbar: 64px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+}
+/* dark theme — when the OS asks for it, unless Light is forced */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --text: #e8eaf5;
+    --muted: #a9afc6;
+    --faint: #767d97;
+    --bg: #0b0d17;
+    --bg-side: #1b1f31;
+    --bg-deep: #252a40;
+    --card: #141726;
+    --pop: #141726;
+    --hover: rgba(232, 234, 245, 0.05);
+    --press: rgba(232, 234, 245, 0.09);
+    --border: rgba(232, 234, 245, 0.08);
+    --border-strong: rgba(232, 234, 245, 0.15);
+    --shadow-modal: 0 0 0 1px rgba(232, 234, 245, 0.08), 0 12px 44px rgba(0, 0, 0, 0.55);
+    --shadow-card: 0 0 0 1px var(--border), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 0 0 1px var(--border-strong), 0 4px 18px rgba(0, 0, 0, 0.35);
+    --scrim: rgba(0, 0, 0, 0.58);
+    --input: #1b1f31;
+    --acc: #8f8aff;
+    --acc-hover: #a29eff;
+    --acc-ink: #120f3a;
+    --acc-soft: rgba(143, 138, 255, 0.16);
+    --acc-glow: 0 6px 16px -6px rgba(143, 138, 255, 0.45);
+    --ring: 0 0 0 3px rgba(143, 138, 255, 0.3);
+    --red: #ff6b93;
+    --red-soft: rgba(255, 107, 147, 0.14);
+    --series-2: #fb923c;
+    --series-3: #4ade80;
+    --tag-gray-bg: rgba(148, 163, 184, 0.14);
+    --tag-gray-tx: #94a3b8;
+    --tag-green-bg: rgba(74, 222, 128, 0.13);
+    --tag-green-tx: #4ade80;
+    --tag-cyan-bg: rgba(45, 212, 191, 0.13);
+    --tag-cyan-tx: #2dd4bf;
+    --tag-blue-bg: rgba(96, 165, 250, 0.14);
+    --tag-blue-tx: #60a5fa;
+    --tag-purple-bg: rgba(179, 148, 255, 0.15);
+    --tag-purple-tx: #b99cff;
+    --tag-orange-bg: rgba(251, 146, 60, 0.14);
+    --tag-orange-tx: #fb923c;
+    --tag-red-bg: rgba(248, 113, 113, 0.14);
+    --tag-red-tx: #f87171;
+    --tag-yellow-bg: rgba(251, 191, 36, 0.14);
+    --tag-yellow-tx: #fbbf24;
+    --tag-brown-bg: rgba(214, 160, 110, 0.15);
+    --tag-brown-tx: #e0ae7e;
+    --tag-pink-bg: rgba(244, 114, 182, 0.14);
+    --tag-pink-tx: #f472b6;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --text: #e8eaf5;
+  --muted: #a9afc6;
+  --faint: #767d97;
+  --bg: #0b0d17;
+  --bg-side: #1b1f31;
+  --bg-deep: #252a40;
+  --card: #141726;
+  --pop: #141726;
+  --hover: rgba(232, 234, 245, 0.05);
+  --press: rgba(232, 234, 245, 0.09);
+  --border: rgba(232, 234, 245, 0.08);
+  --border-strong: rgba(232, 234, 245, 0.15);
+  --shadow-modal: 0 0 0 1px rgba(232, 234, 245, 0.08), 0 12px 44px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 0 0 1px var(--border), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 0 0 1px var(--border-strong), 0 4px 18px rgba(0, 0, 0, 0.35);
+  --scrim: rgba(0, 0, 0, 0.58);
+  --input: #1b1f31;
+  --acc: #8f8aff;
+  --acc-hover: #a29eff;
+  --acc-ink: #120f3a;
+  --acc-soft: rgba(143, 138, 255, 0.16);
+  --acc-glow: 0 6px 16px -6px rgba(143, 138, 255, 0.45);
+  --ring: 0 0 0 3px rgba(143, 138, 255, 0.3);
+  --red: #ff6b93;
+  --red-soft: rgba(255, 107, 147, 0.14);
+  --series-2: #fb923c;
+  --series-3: #4ade80;
+  --tag-gray-bg: rgba(148, 163, 184, 0.14);
+  --tag-gray-tx: #94a3b8;
+  --tag-green-bg: rgba(74, 222, 128, 0.13);
+  --tag-green-tx: #4ade80;
+  --tag-cyan-bg: rgba(45, 212, 191, 0.13);
+  --tag-cyan-tx: #2dd4bf;
+  --tag-blue-bg: rgba(96, 165, 250, 0.14);
+  --tag-blue-tx: #60a5fa;
+  --tag-purple-bg: rgba(179, 148, 255, 0.15);
+  --tag-purple-tx: #b99cff;
+  --tag-orange-bg: rgba(251, 146, 60, 0.14);
+  --tag-orange-tx: #fb923c;
+  --tag-red-bg: rgba(248, 113, 113, 0.14);
+  --tag-red-tx: #f87171;
+  --tag-yellow-bg: rgba(251, 191, 36, 0.14);
+  --tag-yellow-tx: #fbbf24;
+  --tag-brown-bg: rgba(214, 160, 110, 0.15);
+  --tag-brown-tx: #e0ae7e;
+  --tag-pink-bg: rgba(244, 114, 182, 0.14);
+  --tag-pink-tx: #f472b6;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+/* no rubber-band bounce: on iOS it drags the fixed tab bar up past the end of the page */
+html,
+body {
+  overscroll-behavior: none;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-bottom: calc(var(--tabbar) + var(--safe-b));
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+::selection {
+  background: var(--acc-soft);
+}

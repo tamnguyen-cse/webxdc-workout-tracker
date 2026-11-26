@@ -1,0 +1,85 @@
+/* ---------- drag-to-reorder + list search ---------- */
+.grip {
+  cursor: grab;
+  color: var(--faint);
+  user-select: none;
+  font-size: 14px;
+  letter-spacing: -1px;
+}
+.grip:active {
+  cursor: grabbing;
+}
+/* touch: the whole exercise card is the drag handle — no text selection or link
+   callout on its header or field labels when the long press starts the drag */
+.ex.dnd-row[draggable="true"] .ex-head,
+.ex.dnd-row[draggable="true"] .pex-field > span {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.dnd-row.drop-target {
+  box-shadow: inset 0 2px 0 0 var(--acc);
+}
+/* a day chip keeps its tag ring, so the drop hint is an outline around it */
+.chip.drop-target {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+/* the day-moving arrows sit together, apart from the day chips */
+.chip-move {
+  margin-left: auto;
+}
+.chip-move + .chip-move {
+  margin-left: 0;
+}
+/* search pill with the magnifier */
+input.q {
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 320px;
+  padding-left: 38px;
+  border-radius: 99px;
+  background: var(--bg-side) no-repeat 14px 50% / 16px
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2380869c' stroke-width='1.6'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3.5 3.5'/%3E%3C/svg%3E");
+}
+input.q:focus {
+  background-color: var(--pop);
+}
+/* card corner button (delete ✕, plan ☆): top-right, hidden until the card is hovered or
+   keyboard-selected; a default plan's ★ always shows */
+.rowcard .row-del,
+.rowcard .row-star {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  background: var(--bg-side);
+  font-size: 12px;
+  opacity: 0;
+  transition:
+    opacity 0.1s ease,
+    background 0.15s,
+    color 0.15s;
+}
+.rowcard .row-del:hover {
+  background: var(--red-soft);
+  color: var(--red);
+}
+.rowcard .row-star.on {
+  background: var(--tag-yellow-bg);
+  color: var(--tag-yellow-tx);
+  opacity: 1;
+}
+.rowcard:hover .row-del,
+.rowcard:hover .row-star,
+.rowcard .row-del:focus-visible,
+.rowcard .row-star:focus-visible {
+  opacity: 1;
+}
+@media (hover: none) {
+  .rowcard .row-del,
+  .rowcard .row-star {
+    opacity: 1;
+  }
+}

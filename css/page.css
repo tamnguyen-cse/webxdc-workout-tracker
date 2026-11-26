@@ -1,0 +1,233 @@
+/* ---------- page: icon tile + big title, then the active tab's toolbar ---------- */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px 64px;
+}
+.page-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 28px;
+}
+/* render() copies the active tab's line icon in here */
+.page-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--rl);
+  background: var(--acc-soft);
+  color: var(--acc);
+}
+.page-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke-width: 1.7;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 780;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+/* the tab's one-line summary under the title (pageSummary in js/page-shell.js) */
+.page-head-text {
+  min-width: 0;
+  flex: 1;
+}
+.page-sub {
+  margin-top: 2px;
+  font-size: 13.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.page-sub:empty {
+  display: none;
+}
+.tabbar {
+  margin: 18px 0 16px;
+}
+/* tabs: a bottom tab bar on phones and tablets, a left rail on wide screens */
+.tabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 110;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  padding: 6px 4px calc(6px + var(--safe-b));
+  background: var(--pop);
+  background: color-mix(in srgb, var(--pop) 92%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  min-height: 52px;
+  padding: 4px 2px;
+  border: none;
+  border-radius: var(--r);
+  background: none;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 620;
+  letter-spacing: 0.01em;
+  color: var(--faint);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.tab:hover {
+  color: var(--muted);
+}
+.tab-ic {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  max-width: 100%;
+  height: 30px;
+  border-radius: 99px;
+  transition:
+    background 0.2s var(--ease),
+    transform 0.12s var(--ease);
+}
+.tab:active .tab-ic {
+  transform: scale(0.94);
+}
+/* line icons (tabs, page tile): 24px grid, 1.8 stroke, round caps — patterns §11 */
+.tab-ic svg,
+.page-icon svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tab-ic svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+.tab-tx {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tab.on {
+  color: var(--acc);
+}
+.tab.on .tab-ic {
+  background: var(--acc-soft);
+}
+.tab:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+/* a phone on its side has little height: the bottom bar goes slim, icon beside its label */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 899px) {
+  :root {
+    --tabbar: 40px;
+  }
+  .tabs {
+    padding: 2px 4px calc(2px + var(--safe-b));
+  }
+  .tab {
+    flex-direction: row;
+    justify-content: center;
+    gap: 4px;
+    min-height: 36px;
+    padding: 0 2px;
+  }
+  .tab-ic {
+    width: 36px;
+    height: 26px;
+    flex: none;
+  }
+  .tab-ic svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+@media (min-width: 900px) {
+  body {
+    padding-left: var(--rail);
+    padding-bottom: 0;
+  }
+  .tabs {
+    top: 0;
+    right: auto;
+    width: var(--rail);
+    grid-auto-flow: row;
+    grid-auto-rows: 72px;
+    grid-auto-columns: auto;
+    align-content: start;
+    padding: 16px 8px;
+    border-top: none;
+    border-right: 1px solid var(--border);
+  }
+  .tabs::before {
+    content: "";
+    display: block;
+    width: 44px;
+    height: 44px;
+    margin: 4px auto 12px;
+    border-radius: 13px;
+    background: no-repeat center / cover url("../icon.png");
+    box-shadow: 0 8px 18px -8px rgba(61, 47, 196, 0.6);
+  }
+}
+/* toolbar: search pill, filter chips, then the one primary action on the right */
+.tab-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.tab-tools:empty {
+  display: none;
+}
+.tab-tools .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tab-tools .btn.primary {
+  margin-left: auto;
+}
+.tab-tools select {
+  height: 36px;
+  padding: 0 30px 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 99px;
+  background-color: var(--card);
+  font-size: 13.5px;
+  font-weight: 580;
+  color: var(--muted);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 5px 5px;
+}
+.tab-tools select:hover {
+  background-color: var(--bg-side);
+}
+.tab-tools select:focus {
+  border-color: var(--acc);
+  background-color: var(--card);
+}
+.sec {
+  display: none;
+}
+.sec.on {
+  display: block;
+}

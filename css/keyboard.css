@@ -1,0 +1,45 @@
+/* ---------- keyboard: focused list row + shortcut reference ---------- */
+.rowcard:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-card-hover), var(--ring);
+}
+.kbd-group {
+  font-size: 13px;
+  font-weight: 720;
+  text-transform: uppercase;
+  letter-spacing: 0.075em;
+  color: var(--faint);
+  margin: 4px 0 6px;
+}
+.kbd-group ~ .kbd-group {
+  margin-top: 18px;
+}
+.kbd-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.kbd-table td {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.kbd-table td:first-child {
+  width: 40%;
+  padding-right: 12px;
+  white-space: nowrap;
+}
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 7px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  background: var(--card);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+}
