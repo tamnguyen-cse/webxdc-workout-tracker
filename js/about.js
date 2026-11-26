@@ -20,6 +20,11 @@ const ABOUT = {
 /* 0.x versions are the milestones before the first public release (1.0.0). */
 const CHANGES = [
   {
+    v: "1.0.1",
+    date: "2026-11-26",
+    what: "App logo in the title bar. Source code now lives on GitHub.",
+  },
+  {
     v: "1.0.0",
     date: "2026-11-25",
     what: "First public release: a fresh install starts empty, ready for your own exercises.",
