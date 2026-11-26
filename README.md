@@ -1,8 +1,16 @@
-# Workout Tracker
+<p align="center">
+  <img src="icon.png" alt="Workout Tracker icon" width="96">
+</p>
+
+<h1 align="center">Workout Tracker</h1>
 
 A [webxdc](https://webxdc.org) app for planning workouts, logging every set, and tracking progress
 over time. Runs in Delta Chat and other webxdc messengers, or in any browser by opening
 `index.html`.
+
+<p align="center">
+  <img src="docs/screenshot-log.png" alt="Log tab listing workout cycles" width="300">
+</p>
 
 ## Features
 
