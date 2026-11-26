@@ -1,4 +1,4 @@
-/* ---------- app bar: tab name left, timer + sync status + icon buttons right ---------- */
+/* ---------- app bar: logo + tab name left, timer + sync status + icon buttons right ---------- */
 .hdr {
   position: sticky;
   top: 0;
@@ -18,8 +18,23 @@
 .crumbs {
   display: flex;
   align-items: center;
+  gap: 10px;
   min-width: 0;
   white-space: nowrap;
+}
+.hdr-logo {
+  display: block;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  box-shadow: var(--acc-glow);
+}
+/* desktop already shows the app logo at the top of the left rail */
+@media (min-width: 900px) {
+  .hdr-logo {
+    display: none;
+  }
 }
 .crumb {
   font-size: 17px;

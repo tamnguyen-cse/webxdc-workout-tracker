@@ -1,6 +1,6 @@
 /* ============================================================
    Workout Tracker — app logic
-   Template: sync-app-style 2026-11-25 (upgrades: the skill's references/changelog.md)
+   Template: sync-app-style 2026-11-26 (upgrades: the skill's references/changelog.md)
    Data model (localStorage key LS in js/helpers.js; a fresh install starts from data/seed.js):
      templates: [{ id, name, isDefault, updated,
                    versions: [{ v, updated, days: [Day] }] }]
